@@ -35,14 +35,18 @@ def main():
         tex.swizzle = 'BGRA'
         tex.write(surf.get_view('1'))
         return tex
-
-    t = 0
-
+    
+    hmSurf = pygame.Surface((1600, 1200))
+    
     while True:
-        display.fill((255, 255, 255))
-        display.blit(img, pygame.mouse.get_pos())
+        display.fill((0, 0, 255))
 
-        t += 1
+        hmSurf.fill((255, 255, 255))
+        hmSurf.blit(img, (0, 0))
+
+        hm_tex = surf_to_texture(hmSurf)
+        hm_tex.use(1)
+        program['noise'] = 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -52,11 +56,12 @@ def main():
         frame_tex = surf_to_texture(display)
         frame_tex.use(0)
         program['tex'] = 0
-        program['time'] = t
+
         render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
         pygame.display.flip()
-
+        
+        hm_tex.release()
         frame_tex.release()
 
         clock.tick(60)
