@@ -1,16 +1,22 @@
 import pygame, sys
 import moderngl, array
 
+from gen_height_map import generateNoiseTex
+
 def main():
     pygame.init()
 
-    window = pygame.display.set_mode((800, 600), pygame.OPENGL | pygame.DOUBLEBUF)
-    display = pygame.Surface((1600, 1200))
+    windowX = 800
+    windowY = 600
+
+    window = pygame.display.set_mode((windowX, windowY), pygame.OPENGL | pygame.DOUBLEBUF)
+    display = pygame.Surface((windowX, windowY))
     ctx = moderngl.create_context()
 
     clock = pygame.time.Clock()
-
-    img = pygame.image.load('img.png')\
+    
+    generateNoiseTex(120, 90, 0, 0) # create noise tex as png file
+    img = pygame.image.load('img.png')
 
     quad_buffer = ctx.buffer(data=array.array('f', [
         # x,    y,    u,    v,
@@ -39,9 +45,8 @@ def main():
     hmSurf = pygame.Surface((1600, 1200))
     
     while True:
-        display.fill((0, 0, 255))
+        display.fill((154, 205, 50))
 
-        hmSurf.fill((255, 255, 255))
         hmSurf.blit(img, (0, 0))
 
         hm_tex = surf_to_texture(hmSurf)
@@ -57,6 +62,9 @@ def main():
         frame_tex.use(0)
         program['tex'] = 0
 
+        program['windowX'] = windowX
+        program['windowY'] = windowY
+        
         render_object.render(mode=moderngl.TRIANGLE_STRIP)
 
         pygame.display.flip()
